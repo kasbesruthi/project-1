@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: project-1
-          image: kasbesruthi/project-1:latest
+          image: kasbesruthi/project-1:build-4
           ports:
             - containerPort: 5000
