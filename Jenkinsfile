@@ -20,18 +20,20 @@ pipeline {
         stage ('Build and Push') {
             when { branch 'main' }
             steps {
-                env IMAGE_TAG = "build-${BUILD_NUMBER}"
+                script {
+                    env.IMAGE_TAG = "build-${BUILD_NUMBER}"
 
-                withCredentials([usernamePassword(
-                    credentailsId: "dockerhub-creds",
-                    usernameVariable: "DOCKER_USER",
-                    passwordVariable: "DOCKER_PASS"
-                )]) {
-                    sh """
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                    echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
+                    withCredentials([usernamePassword(
+                        credentialsId: "dockerhub-creds",
+                        usernameVariable: "DOCKER_USER",
+                        passwordVariable: "DOCKER_PASS"
+                    )]) {
+                        sh """
+                        docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                        echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        """
+                    }
                 }
             }
         }
@@ -40,8 +42,8 @@ pipeline {
             steps {
                 script{
                     withCredentials([usernamePassword(
-                        credentialsId: "git-creds"
-                        usernameVariable: "GIT_USERNAME"
+                        credentialsId: "git-creds",
+                        usernameVariable: "GIT_USERNAME",
                         passwordVariable: "GIT_TOKEN"
                     )]) {
                         sh """
